@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/drumbot.iml" filepath="$PROJECT_DIR$/drumbot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drumbot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/drumbot_main.iml" group="drumbot" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drumbot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/drumbot_test.iml" group="drumbot" />
     </modules>
   </component>
 </project>
