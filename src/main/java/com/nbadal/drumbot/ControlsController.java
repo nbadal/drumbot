@@ -3,17 +3,16 @@ package com.nbadal.drumbot;
 import com.nbadal.drumbot.spotify.Spotify;
 import com.nbadal.drumbot.util.StringUtils;
 
-import org.omg.PortableInterceptor.SUCCESSFUL;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+
+import static io.reactivex.rxjavafx.observables.JavaFxObservable.valuesOf;
 
 public class ControlsController implements Initializable {
 
@@ -32,25 +31,26 @@ public class ControlsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        authCodeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            authTokenButton.setDisable(StringUtils.isEmpty(newValue));
-        });
+        valuesOf(authCodeField.textProperty()).map(StringUtils::isEmpty)
+                .subscribe(authTokenButton::setDisable);
 
-        accessTokenField.textProperty().addListener(((observable, oldValue, newValue) -> {
-            getInfoButton.setDisable(StringUtils.isEmpty(newValue));
-            playSongField.setDisable(StringUtils.isEmpty(newValue));
-        }));
+        valuesOf(accessTokenField.textProperty()).map(StringUtils::isEmpty)
+                .subscribe(getInfoButton::setDisable);
+        valuesOf(accessTokenField.textProperty()).map(StringUtils::isEmpty)
+                .subscribe(playSongField::setDisable);
 
-        refreshTokenField.textProperty().addListener(((observable, oldValue, newValue) -> {
-            refreshTokenButton.setDisable(StringUtils.isEmpty(newValue));
-        }));
+        valuesOf(refreshTokenField.textProperty()).map(StringUtils::isEmpty)
+                .subscribe(refreshTokenButton::setDisable);
 
-        playSongField.textProperty().addListener(((observable, oldValue, newValue) -> {
-            playSongButton.setDisable(StringUtils.isEmpty(newValue));
-        }));
+        valuesOf(playSongField.textProperty()).map(value -> !isValidTrackUri(value))
+                .subscribe(playSongButton::setDisable);
 
         spotify.observeAccessToken().subscribe(accessTokenField::setText);
         spotify.observeRefreshToken().subscribe(refreshTokenField::setText);
+    }
+
+    private boolean isValidTrackUri(String value) {
+        return !StringUtils.isEmpty(value) && value.startsWith("spotify:track:");
     }
 
     public void createTokenClicked() {
