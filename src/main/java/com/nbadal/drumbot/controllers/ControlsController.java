@@ -1,11 +1,14 @@
-package com.nbadal.drumbot;
+package com.nbadal.drumbot.controllers;
 
-import com.nbadal.drumbot.spotify.Spotify;
+import com.nbadal.drumbot.music.MusicManager;
+import com.nbadal.drumbot.spotify.SpotifyManager;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import javafx.fxml.Initializable;
@@ -27,7 +30,11 @@ public class ControlsController implements Initializable {
     public Button getInfoButton;
     public Button playSongButton;
 
-    private final Spotify spotify = new Spotify();
+    @Inject
+    MusicManager musicManager;
+
+    @Inject
+    SpotifyManager spotify;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,13 +74,17 @@ public class ControlsController implements Initializable {
 
     public void getInfoClicked() {
         songInfoField.setText("");
-        spotify.getSongInfo().subscribe(songInfoField::setText);
+        spotify.getSongInfo().subscribe(song -> {
+            songInfoField.setText(song.name);
+        });
     }
 
     public void playSongClicked() {
         spotify.play(playSongField.getText())
                 .andThen(Completable.timer(1, TimeUnit.SECONDS))
                 .andThen(spotify.getSongInfo())
-                .subscribe(songInfoField::setText);
+                .subscribe(song -> {
+                    songInfoField.setText(song.name);
+                });
     }
 }

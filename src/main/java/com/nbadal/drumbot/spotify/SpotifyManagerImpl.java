@@ -4,20 +4,26 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.nbadal.drumbot.music.MusicManager;
+import com.nbadal.drumbot.music.Song;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -36,7 +42,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
-public class Spotify {
+public class SpotifyManagerImpl implements SpotifyManager {
 
     private static final String BASE_URL = "https://api.spotify.com";
     private static final String AUTH_URL = "https://accounts.spotify.com";
@@ -50,6 +56,8 @@ public class Spotify {
 
     private static final String PREF_REFRESH_TOKEN = "refreshToken";
 
+    private final MusicManager musicManager;
+
     private final AuthAPI authApi;
     private final SpotifyAPI spotifyApi;
 
@@ -58,7 +66,10 @@ public class Spotify {
     private final Subject<String> accessTokenSubject = BehaviorSubject.create();
     private final Subject<String> refreshTokenSubject = BehaviorSubject.create();
 
-    public Spotify() {
+    @Inject
+    public SpotifyManagerImpl(MusicManager musicManager) {
+        this.musicManager = musicManager;
+
         HttpLoggingInterceptor logger = new HttpLoggingInterceptor(System.out::println);
         logger.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -96,14 +107,17 @@ public class Spotify {
         refreshTokenSubject.subscribe(refresh -> preferences.put(PREF_REFRESH_TOKEN, refresh));
     }
 
+    @Override
     public Observable<String> observeAccessToken() {
         return accessTokenSubject;
     }
 
+    @Override
     public Observable<String> observeRefreshToken() {
         return refreshTokenSubject;
     }
 
+    @Override
     public Completable openLoginAuth() {
         return Completable.defer(() -> {
             Desktop.getDesktop().browse(URI.create(AUTH_URL
@@ -118,28 +132,47 @@ public class Spotify {
         });
     }
 
+    @Override
     public Single<SpotifyTokenResponse> createAccessToken(String authCode) {
         return authApi.createAccessToken(authCode)
                 .doOnSuccess(this::handleNewTokenInfo)
+                .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
     }
 
+    @Override
     public Single<SpotifyTokenResponse> refreshAuthToken() {
         return refreshTokenSubject.firstElement()
                 .flatMapSingle(authApi::refreshToken)
                 .doOnSuccess(this::handleNewTokenInfo)
+                .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
     }
 
-    public Single<String> getSongInfo() {
+    @Override
+    public Maybe<Song> getSongInfo() {
         return spotifyApi.getCurrentlyPlaying()
-                .map(currentlyPlaying -> currentlyPlaying.item.name)
-                .switchIfEmpty(Single.just("Not Playing."))
+                .map(this::buildSong)
+                .doOnSuccess(musicManager::notifySongPlaying)
+                .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
     }
 
+    private Song buildSong(SpotifyCurrentlyPlaying current) {
+        final String biggestImageUrl = current.item.album.images.stream()
+                .sorted(Comparator.<SpotifyImage>comparingInt(image -> image.height).reversed())
+                .map(image -> image.url)
+                .findFirst().orElse(null);
+
+        return new Song(current.item.name,
+                current.item.artists.get(0).name,
+                biggestImageUrl);
+    }
+
+    @Override
     public Completable play(String songUri) {
         return spotifyApi.play(new SpotifyPlayRequest(songUri))
+                .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
     }
 

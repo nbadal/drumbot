@@ -33,8 +33,8 @@ dependencies {
     compile "io.reactivex.rxjava2:rxjavafx:2.+"
 
     // Dagger 2
-    compile 'com.google.dagger:dagger:2.+'
-    apt 'com.google.dagger:dagger-compiler:2.+'
+    compile 'com.google.dagger:dagger:2.14.1'
+    apt 'com.google.dagger:dagger-compiler:2.14.1'
 
     // Retrofit - Networking
     compile 'com.squareup.retrofit2:retrofit:2.3.0'

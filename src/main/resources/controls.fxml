@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="center" spacing="8.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nbadal.drumbot.ControlsController">
+<VBox alignment="center" spacing="8.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nbadal.drumbot.controllers.ControlsController">
     <children>
         <Button mnemonicParsing="false" onAction="#openAuthSiteClicked" text="Browser Auth" />
         <TextField fx:id="authCodeField" promptText="Auth Code" />
