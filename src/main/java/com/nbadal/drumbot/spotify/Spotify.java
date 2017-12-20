@@ -59,7 +59,7 @@ public class Spotify {
     private final Subject<String> refreshTokenSubject = BehaviorSubject.create();
 
     public Spotify() {
-        HttpLoggingInterceptor logger = new HttpLoggingInterceptor();
+        HttpLoggingInterceptor logger = new HttpLoggingInterceptor(System.out::println);
         logger.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         Gson gson = new GsonBuilder()
