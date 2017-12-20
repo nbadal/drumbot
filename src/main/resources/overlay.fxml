@@ -1,4 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<GridPane fx:controller="com.nbadal.drumbot.controllers.OverlayController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nbadal.drumbot.Main">
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="2" />
+      <Label fx:id="songName" text="Song Name" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font></Label>
+      <Label text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+   </children>
 </GridPane>

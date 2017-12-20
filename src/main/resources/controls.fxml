@@ -1,4 +1,33 @@
-<?import javafx.scene.layout.GridPane?>
-<GridPane fx:controller="com.nbadal.drumbot.controllers.ControlsController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-</GridPane>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="center" spacing="8.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nbadal.drumbot.ControlsController">
+    <children>
+        <Button mnemonicParsing="false" onAction="#openAuthSiteClicked" text="Browser Auth" />
+        <TextField fx:id="authCodeField" promptText="Auth Code" />
+        <HBox spacing="8.0">
+            <children>
+                <Button fx:id="authTokenButton" disable="true" mnemonicParsing="false" onAction="#createTokenClicked" text="Create Auth Token" />
+                <Button fx:id="refreshTokenButton" disable="true" mnemonicParsing="false" onAction="#refreshClicked" text="Refresh Token" />
+            </children>
+        </HBox>
+        <TextField fx:id="accessTokenField" editable="false" promptText="Auth Token" />
+        <TextField fx:id="refreshTokenField" editable="false" promptText="Refresh Token" />
+        <HBox spacing="8.0">
+            <children>
+                <Button fx:id="getInfoButton" disable="true" mnemonicParsing="false" onAction="#getInfoClicked" text="Get Song Name" />
+                <TextField fx:id="songInfoField" editable="false" />
+            </children>
+        </HBox>
+        <HBox spacing="8.0">
+            <children>
+                <Button fx:id="playSongButton" disable="true" mnemonicParsing="false" onAction="#playSongClicked" text="Play Song" />
+                <TextField fx:id="playSongField" disable="true" promptText="Song URI" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
