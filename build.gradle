@@ -44,4 +44,7 @@ dependencies {
 
     // Gson - JSON Parsing
     compile 'com.google.code.gson:gson:2.8.2'
+
+    // Socket.IO - Radio Sniffery
+    compile 'io.socket:socket.io-client:+'
 }

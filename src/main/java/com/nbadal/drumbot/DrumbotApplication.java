@@ -2,6 +2,9 @@ package com.nbadal.drumbot;
 
 import com.nbadal.drumbot.controllers.ControlsController;
 import com.nbadal.drumbot.controllers.OverlayController;
+import com.nbadal.drumbot.radio.RadioManager;
+
+import javax.inject.Inject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +13,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class DrumbotApplication extends Application {
+
+    @Inject
+    RadioManager radio;
 
     private AppComponent appComponent;
 
@@ -22,6 +28,9 @@ public class DrumbotApplication extends Application {
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule())
                 .build();
+        appComponent.inject(this);
+
+        radio.connect().subscribe();
 
         final FXMLLoader overlayLoader = new FXMLLoader(getClass().getResource("/overlay.fxml"));
         overlayLoader.setControllerFactory(this::createController);
