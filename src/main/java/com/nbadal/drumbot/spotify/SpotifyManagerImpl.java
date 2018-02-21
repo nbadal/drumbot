@@ -164,7 +164,9 @@ public class SpotifyManagerImpl implements SpotifyManager {
                 .map(image -> image.url)
                 .findFirst().orElse(null);
 
-        return new Song(current.item.name,
+        return new Song(
+                Song.Source.SPOTIFY,
+                current.item.name,
                 current.item.artists.get(0).name,
                 biggestImageUrl);
     }

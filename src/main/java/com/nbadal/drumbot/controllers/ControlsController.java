@@ -1,10 +1,13 @@
 package com.nbadal.drumbot.controllers;
 
 import com.nbadal.drumbot.music.MusicManager;
+import com.nbadal.drumbot.music.Song;
 import com.nbadal.drumbot.spotify.SpotifyManager;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -13,11 +16,14 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import static io.reactivex.rxjavafx.observables.JavaFxObservable.valuesOf;
 
 public class ControlsController implements Initializable {
+
+    public ComboBox<Song.Source> sourceSelector;
 
     public TextField authCodeField;
     public TextField accessTokenField;
@@ -38,6 +44,12 @@ public class ControlsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Sources:
+        sourceSelector.getItems().setAll(Song.Source.values());
+        valuesOf(sourceSelector.valueProperty())
+                .subscribe(musicManager::setSelectedSource);
+
+        // Spotify:
         valuesOf(authCodeField.textProperty()).map(StringUtils::isEmpty)
                 .subscribe(authTokenButton::setDisable);
 
