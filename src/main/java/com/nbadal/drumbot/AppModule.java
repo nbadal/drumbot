@@ -2,10 +2,10 @@ package com.nbadal.drumbot;
 
 import com.nbadal.drumbot.music.MusicManager;
 import com.nbadal.drumbot.music.MusicManagerImpl;
-import com.nbadal.drumbot.radio.RadioManager;
-import com.nbadal.drumbot.radio.RadioManagerImpl;
-import com.nbadal.drumbot.spotify.SpotifyManager;
-import com.nbadal.drumbot.spotify.SpotifyManagerImpl;
+import com.nbadal.drumbot.music.radio.RadioManager;
+import com.nbadal.drumbot.music.radio.RadioManagerImpl;
+import com.nbadal.drumbot.music.spotify.SpotifyManager;
+import com.nbadal.drumbot.music.spotify.SpotifyManagerImpl;
 
 import javax.inject.Singleton;
 

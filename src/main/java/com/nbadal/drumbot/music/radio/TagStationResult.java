@@ -1,4 +1,4 @@
-package com.nbadal.drumbot.radio;
+package com.nbadal.drumbot.music.radio;
 
 public class TagStationResult {
     public Data data;

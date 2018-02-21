@@ -2,12 +2,10 @@ package com.nbadal.drumbot.controllers;
 
 import com.nbadal.drumbot.music.MusicManager;
 import com.nbadal.drumbot.music.Song;
-import com.nbadal.drumbot.spotify.SpotifyManager;
+import com.nbadal.drumbot.music.spotify.SpotifyManager;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 

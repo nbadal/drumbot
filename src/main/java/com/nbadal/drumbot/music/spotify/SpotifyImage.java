@@ -1,4 +1,4 @@
-package com.nbadal.drumbot.spotify;
+package com.nbadal.drumbot.music.spotify;
 
 public class SpotifyImage {
     public String url;

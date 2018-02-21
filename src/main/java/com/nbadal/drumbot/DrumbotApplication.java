@@ -2,7 +2,7 @@ package com.nbadal.drumbot;
 
 import com.nbadal.drumbot.controllers.ControlsController;
 import com.nbadal.drumbot.controllers.OverlayController;
-import com.nbadal.drumbot.radio.RadioManager;
+import com.nbadal.drumbot.music.radio.RadioManager;
 
 import javax.inject.Inject;
 

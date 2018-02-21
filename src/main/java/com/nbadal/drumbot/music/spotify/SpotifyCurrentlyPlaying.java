@@ -1,4 +1,4 @@
-package com.nbadal.drumbot.spotify;
+package com.nbadal.drumbot.music.spotify;
 
 public class SpotifyCurrentlyPlaying {
     public boolean isPlaying;

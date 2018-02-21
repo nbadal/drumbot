@@ -1,4 +1,4 @@
-package com.nbadal.drumbot.radio;
+package com.nbadal.drumbot.music.radio;
 
 import com.nbadal.drumbot.music.Song;
 

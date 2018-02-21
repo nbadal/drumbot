@@ -1,4 +1,4 @@
-package com.nbadal.drumbot.spotify;
+package com.nbadal.drumbot.music.spotify;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -11,8 +11,6 @@ import com.nbadal.drumbot.util.StringUtils;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Comparator;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;

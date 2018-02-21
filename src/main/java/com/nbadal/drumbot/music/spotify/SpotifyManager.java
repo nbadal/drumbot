@@ -1,6 +1,4 @@
-package com.nbadal.drumbot.spotify;
-
-import com.nbadal.drumbot.music.Song;
+package com.nbadal.drumbot.music.spotify;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
