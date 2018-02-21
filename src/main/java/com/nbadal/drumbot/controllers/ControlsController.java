@@ -87,7 +87,7 @@ public class ControlsController implements Initializable {
     public void getInfoClicked() {
         songInfoField.setText("");
         spotify.getSongInfo().subscribe(song -> {
-            songInfoField.setText(song.name);
+            songInfoField.setText(song.getName());
         });
     }
 
@@ -96,7 +96,7 @@ public class ControlsController implements Initializable {
                 .andThen(Completable.timer(1, TimeUnit.SECONDS))
                 .andThen(spotify.getSongInfo())
                 .subscribe(song -> {
-                    songInfoField.setText(song.name);
+                    songInfoField.setText(song.getName());
                 });
     }
 }

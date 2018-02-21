@@ -24,9 +24,9 @@ public class OverlayController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         music.observeNowPlaying().subscribe(newSong -> {
-            songName.setText(newSong.name);
-            artistName.setText(newSong.artist);
-            thumbnail.setImage(new Image(newSong.thumbnailUrl, true));
+            songName.setText(newSong.getName());
+            artistName.setText(newSong.getArtist());
+            thumbnail.setImage(new Image(newSong.getThumbnailUrl(), true));
         });
     }
 }

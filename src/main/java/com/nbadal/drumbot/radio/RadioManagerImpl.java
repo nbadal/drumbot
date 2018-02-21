@@ -36,8 +36,7 @@ public class RadioManagerImpl implements RadioManager {
     }
 
     private Song createSong(TagStationResult result) {
-        return new Song(
-                Song.Source.RADIO,
+        return new RadioSong(
                 result.data.currentEvent.lookupTitle,
                 result.data.currentEvent.lookupArtist,
                 result.data.currentEvent.imageUrlHd

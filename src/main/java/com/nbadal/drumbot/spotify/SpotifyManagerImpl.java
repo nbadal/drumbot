@@ -179,25 +179,12 @@ public class SpotifyManagerImpl implements SpotifyManager {
     }
 
     @Override
-    public Maybe<Song> getSongInfo() {
+    public Maybe<SpotifySong> getSongInfo() {
         return spotifyApi.getCurrentlyPlaying()
-                .map(this::buildSong)
+                .map(SpotifySong::new)
                 .doOnSuccess(musicManager::notifySongPlaying)
                 .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
-    }
-
-    private Song buildSong(SpotifyCurrentlyPlaying current) {
-        final String biggestImageUrl = current.item.album.images.stream()
-                .sorted(Comparator.<SpotifyImage>comparingInt(image -> image.height).reversed())
-                .map(image -> image.url)
-                .findFirst().orElse(null);
-
-        return new Song(
-                Song.Source.SPOTIFY,
-                current.item.name,
-                current.item.artists.get(0).name,
-                biggestImageUrl);
     }
 
     @Override

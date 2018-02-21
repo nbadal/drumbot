@@ -18,7 +18,7 @@ public interface SpotifyManager {
 
     Single<SpotifyTokenResponse> refreshAuthToken();
 
-    Maybe<Song> getSongInfo();
+    Maybe<SpotifySong> getSongInfo();
 
     Completable play(String songUri);
 }

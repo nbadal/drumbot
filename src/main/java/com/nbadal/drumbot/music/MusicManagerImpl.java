@@ -14,7 +14,7 @@ public class MusicManagerImpl implements MusicManager {
     @Override
     public Observable<Song> observeNowPlaying() {
         return nowPlayingSubject
-                .filter(song -> song.source.equals(selectedSource))
+                .filter(song -> song.getSource().equals(selectedSource))
                 .distinctUntilChanged()
                 .observeOn(JavaFxScheduler.platform());
     }
