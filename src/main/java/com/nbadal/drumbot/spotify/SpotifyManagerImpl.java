@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +24,7 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
@@ -66,6 +68,8 @@ public class SpotifyManagerImpl implements SpotifyManager {
     private final Subject<String> accessTokenSubject = BehaviorSubject.create();
     private final Subject<String> refreshTokenSubject = BehaviorSubject.create();
 
+    private Disposable pollingDisposable;
+
     @Inject
     public SpotifyManagerImpl(MusicManager musicManager) {
         this.musicManager = musicManager;
@@ -105,6 +109,16 @@ public class SpotifyManagerImpl implements SpotifyManager {
             refreshTokenSubject.onNext(prefToken);
         }
         refreshTokenSubject.subscribe(refresh -> preferences.put(PREF_REFRESH_TOKEN, refresh));
+
+        musicManager.observeSelectedSource()
+                .map(Song.Source.SPOTIFY::equals)
+                .subscribe(selected -> {
+                    if (selected) {
+                        startPolling();
+                    } else {
+                        stopPolling();
+                    }
+                });
     }
 
     @Override
@@ -147,6 +161,21 @@ public class SpotifyManagerImpl implements SpotifyManager {
                 .doOnSuccess(this::handleNewTokenInfo)
                 .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
+    }
+
+    private void startPolling() {
+        if (pollingDisposable != null && !pollingDisposable.isDisposed()) return;
+
+        pollingDisposable = Observable.interval(1500, TimeUnit.MILLISECONDS)
+                .flatMapMaybe(tick -> getSongInfo())
+                .subscribe();
+    }
+
+    private void stopPolling() {
+        if (pollingDisposable == null || pollingDisposable.isDisposed()) return;
+
+        pollingDisposable.dispose();
+        pollingDisposable = null;
     }
 
     @Override

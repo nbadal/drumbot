@@ -7,4 +7,5 @@ public interface MusicManager {
     Observable<Song> observeNowPlaying();
 
     void setSelectedSource(Song.Source source);
+    Observable<Song.Source> observeSelectedSource();
 }

@@ -8,12 +8,14 @@ import io.reactivex.subjects.Subject;
 public class MusicManagerImpl implements MusicManager {
 
     private Song.Source selectedSource = null;
+    private Subject<Song.Source> sourceSubject = PublishSubject.create();
     private Subject<Song> nowPlayingSubject = PublishSubject.create();
 
     @Override
     public Observable<Song> observeNowPlaying() {
         return nowPlayingSubject
                 .filter(song -> song.source.equals(selectedSource))
+                .distinctUntilChanged()
                 .observeOn(JavaFxScheduler.platform());
     }
 
@@ -26,5 +28,13 @@ public class MusicManagerImpl implements MusicManager {
     public void setSelectedSource(Song.Source source) {
         // TODO: handle previously-playing song on this source. is it still playing? etc.
         selectedSource = source;
+        sourceSubject.onNext(source);
+    }
+
+    @Override
+    public Observable<Song.Source> observeSelectedSource() {
+        return sourceSubject
+                .distinctUntilChanged()
+                .observeOn(JavaFxScheduler.platform());
     }
 }
