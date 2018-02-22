@@ -2,8 +2,12 @@ package com.nbadal.drumbot;
 
 import com.nbadal.drumbot.controllers.ControlsController;
 import com.nbadal.drumbot.controllers.OverlayController;
+import com.nbadal.drumbot.lifecycle.LifecycleManager;
+
+import javax.inject.Inject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,6 +16,9 @@ import javafx.stage.Stage;
 public class DrumbotApplication extends Application {
 
     private AppComponent appComponent;
+
+    @Inject
+    LifecycleManager lifecycleManager;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,6 +45,13 @@ public class DrumbotApplication extends Application {
         controlsStage.setTitle("Drumbot Controls");
         controlsStage.setScene(new Scene(controls, 300, 275));
         controlsStage.show();
+
+        lifecycleManager.onStart();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        lifecycleManager.onStop();
     }
 
     public Object createController(Class<?> type) {

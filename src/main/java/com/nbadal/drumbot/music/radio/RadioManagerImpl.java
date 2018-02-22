@@ -3,12 +3,16 @@ package com.nbadal.drumbot.music.radio;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.nbadal.drumbot.lifecycle.LifecycleListener;
+import com.nbadal.drumbot.lifecycle.LifecycleManager;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -16,17 +20,17 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import okhttp3.OkHttpClient;
 
-public class RadioManagerImpl implements RadioManager {
+public class RadioManagerImpl implements RadioManager, LifecycleListener {
 
     private Socket socket;
     private Subject<JSONObject> socketSubject = PublishSubject.create();
     private Gson mGson;
 
     private Subject<RadioSong> currentlyPlayingSubject = PublishSubject.create();
+    private Disposable connectionDisposable;
 
     public RadioManagerImpl() {
         mGson = new GsonBuilder().create();
-        connect().subscribe();
         socketSubject
                 .map(JSONObject::toString)
                 .doOnNext(this::log)
@@ -45,13 +49,24 @@ public class RadioManagerImpl implements RadioManager {
     }
 
     @Override
+    public void onStart() {
+    }
+
+    @Override
+    public void onStop() {
+        disconnect().subscribe();
+    }
+
+    @Override
     public String toString() {
         return "Radio";
     }
 
     @Override
     public Observable<RadioSong> observeCurrentlyPlaying() {
-        return currentlyPlayingSubject.subscribeOn(JavaFxScheduler.platform());
+        return connect().andThen(currentlyPlayingSubject
+                .doFinally(() -> disconnect().subscribe())
+                .subscribeOn(JavaFxScheduler.platform()));
     }
 
     @Override

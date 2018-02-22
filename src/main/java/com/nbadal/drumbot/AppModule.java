@@ -1,5 +1,6 @@
 package com.nbadal.drumbot;
 
+import com.nbadal.drumbot.lifecycle.LifecycleManager;
 import com.nbadal.drumbot.music.MusicManager;
 import com.nbadal.drumbot.music.MusicManagerImpl;
 import com.nbadal.drumbot.music.MusicSource;
@@ -30,13 +31,19 @@ public class AppModule {
 
     @Provides
     @Singleton
-    SpotifyManager provideSpotifyManager() {
-        return new SpotifyManagerImpl();
+    SpotifyManager provideSpotifyManager(LifecycleManager lifecycle) {
+        return new SpotifyManagerImpl(lifecycle);
     }
 
     @Provides
     @Singleton
     RadioManager provideRadioManager() {
         return new RadioManagerImpl();
+    }
+
+    @Provides
+    @Singleton
+    LifecycleManager provideLifecycleManager() {
+        return new LifecycleManager();
     }
 }

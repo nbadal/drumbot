@@ -4,6 +4,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.nbadal.drumbot.lifecycle.LifecycleListener;
+import com.nbadal.drumbot.lifecycle.LifecycleManager;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.awt.*;
@@ -40,7 +42,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
-public class SpotifyManagerImpl implements SpotifyManager {
+public class SpotifyManagerImpl implements SpotifyManager, LifecycleListener {
 
     private static final String BASE_URL = "https://api.spotify.com";
     private static final String AUTH_URL = "https://accounts.spotify.com";
@@ -67,7 +69,7 @@ public class SpotifyManagerImpl implements SpotifyManager {
     private Subject<SpotifySong> currentlyPlayingSubject = BehaviorSubject.create();
 
     @Inject
-    public SpotifyManagerImpl() {
+    public SpotifyManagerImpl(LifecycleManager lifecycle) {
         HttpLoggingInterceptor logger = new HttpLoggingInterceptor(System.out::println);
         logger.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -103,6 +105,17 @@ public class SpotifyManagerImpl implements SpotifyManager {
             refreshTokenSubject.onNext(prefToken);
         }
         refreshTokenSubject.subscribe(refresh -> preferences.put(PREF_REFRESH_TOKEN, refresh));
+
+        lifecycle.addListener(this);
+    }
+
+    @Override
+    public void onStart() {
+    }
+
+    @Override
+    public void onStop() {
+        stopPolling();
     }
 
     @Override
