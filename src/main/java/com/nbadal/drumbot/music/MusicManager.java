@@ -1,11 +1,14 @@
 package com.nbadal.drumbot.music;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 
 public interface MusicManager {
-    void notifySongPlaying(Song song);
-    Observable<Song> observeNowPlaying();
+    List<MusicSource> getSources();
 
-    void setSelectedSource(Song.Source source);
-    Observable<Song.Source> observeSelectedSource();
+    void selectSource(MusicSource source);
+    Observable<MusicSource> observeSelectedSource();
+
+    Observable<Song> observeNowPlaying();
 }

@@ -1,11 +1,13 @@
 package com.nbadal.drumbot.music.spotify;
 
+import com.nbadal.drumbot.music.MusicSource;
+
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
-public interface SpotifyManager {
+public interface SpotifyManager extends MusicSource {
     Completable openLoginAuth();
 
     Observable<String> observeAccessToken();

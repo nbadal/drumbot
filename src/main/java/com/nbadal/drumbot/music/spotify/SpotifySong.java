@@ -12,11 +12,6 @@ public class SpotifySong extends Song {
     }
 
     @Override
-    public Source getSource() {
-        return Source.SPOTIFY;
-    }
-
-    @Override
     public String getName() {
         return song.item.name;
     }

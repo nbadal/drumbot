@@ -3,14 +3,13 @@ package com.nbadal.drumbot.music.radio;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.nbadal.drumbot.music.MusicManager;
-import com.nbadal.drumbot.music.Song;
-
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import io.socket.client.IO;
@@ -23,7 +22,9 @@ public class RadioManagerImpl implements RadioManager {
     private Subject<JSONObject> socketSubject = PublishSubject.create();
     private Gson mGson;
 
-    public RadioManagerImpl(MusicManager manager) {
+    private Subject<RadioSong> currentlyPlayingSubject = PublishSubject.create();
+
+    public RadioManagerImpl() {
         mGson = new GsonBuilder().create();
         connect().subscribe();
         socketSubject
@@ -32,15 +33,25 @@ public class RadioManagerImpl implements RadioManager {
                 .map(json -> mGson.fromJson(json, TagStationResult.class))
                 .filter(result -> result.data.currentEvent.category.equals("Song"))
                 .map(this::createSong)
-                .subscribe(manager::notifySongPlaying);
+                .subscribe(currentlyPlayingSubject::onNext);
     }
 
-    private Song createSong(TagStationResult result) {
+    private RadioSong createSong(TagStationResult result) {
         return new RadioSong(
                 result.data.currentEvent.lookupTitle,
                 result.data.currentEvent.lookupArtist,
                 result.data.currentEvent.imageUrlHd
         );
+    }
+
+    @Override
+    public String toString() {
+        return "Radio";
+    }
+
+    @Override
+    public Observable<RadioSong> observeCurrentlyPlaying() {
+        return currentlyPlayingSubject.subscribeOn(JavaFxScheduler.platform());
     }
 
     @Override

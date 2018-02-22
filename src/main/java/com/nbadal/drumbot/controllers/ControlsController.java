@@ -1,6 +1,7 @@
 package com.nbadal.drumbot.controllers;
 
 import com.nbadal.drumbot.music.MusicManager;
+import com.nbadal.drumbot.music.MusicSource;
 import com.nbadal.drumbot.music.Song;
 import com.nbadal.drumbot.music.spotify.SpotifyManager;
 import com.nbadal.drumbot.util.StringUtils;
@@ -21,7 +22,7 @@ import static io.reactivex.rxjavafx.observables.JavaFxObservable.valuesOf;
 
 public class ControlsController implements Initializable {
 
-    public ComboBox<Song.Source> sourceSelector;
+    public ComboBox<MusicSource> sourceSelector;
 
     public TextField authCodeField;
     public TextField accessTokenField;
@@ -43,9 +44,9 @@ public class ControlsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Sources:
-        sourceSelector.getItems().setAll(Song.Source.values());
+        sourceSelector.getItems().setAll(musicManager.getSources());
         valuesOf(sourceSelector.valueProperty())
-                .subscribe(musicManager::setSelectedSource);
+                .subscribe(musicManager::selectSource);
 
         // Spotify:
         valuesOf(authCodeField.textProperty()).map(StringUtils::isEmpty)

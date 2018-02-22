@@ -14,11 +14,6 @@ public class RadioSong extends Song {
     }
 
     @Override
-    public Source getSource() {
-        return Source.RADIO;
-    }
-
-    @Override
     public String getName() {
         return name;
     }

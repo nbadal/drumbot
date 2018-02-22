@@ -4,8 +4,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.nbadal.drumbot.music.MusicManager;
-import com.nbadal.drumbot.music.Song;
 import com.nbadal.drumbot.util.StringUtils;
 
 import java.awt.*;
@@ -56,7 +54,6 @@ public class SpotifyManagerImpl implements SpotifyManager {
 
     private static final String PREF_REFRESH_TOKEN = "refreshToken";
 
-    private final MusicManager musicManager;
 
     private final AuthAPI authApi;
     private final SpotifyAPI spotifyApi;
@@ -67,11 +64,10 @@ public class SpotifyManagerImpl implements SpotifyManager {
     private final Subject<String> refreshTokenSubject = BehaviorSubject.create();
 
     private Disposable pollingDisposable;
+    private Subject<SpotifySong> currentlyPlayingSubject = BehaviorSubject.create();
 
     @Inject
-    public SpotifyManagerImpl(MusicManager musicManager) {
-        this.musicManager = musicManager;
-
+    public SpotifyManagerImpl() {
         HttpLoggingInterceptor logger = new HttpLoggingInterceptor(System.out::println);
         logger.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -107,16 +103,18 @@ public class SpotifyManagerImpl implements SpotifyManager {
             refreshTokenSubject.onNext(prefToken);
         }
         refreshTokenSubject.subscribe(refresh -> preferences.put(PREF_REFRESH_TOKEN, refresh));
+    }
 
-        musicManager.observeSelectedSource()
-                .map(Song.Source.SPOTIFY::equals)
-                .subscribe(selected -> {
-                    if (selected) {
-                        startPolling();
-                    } else {
-                        stopPolling();
-                    }
-                });
+    @Override
+    public String toString() {
+        return "Spotify";
+    }
+
+    @Override
+    public Observable<SpotifySong> observeCurrentlyPlaying() {
+        return currentlyPlayingSubject
+                .doOnSubscribe(__ -> startPolling())
+                .doFinally(this::stopPolling);
     }
 
     @Override
@@ -166,7 +164,7 @@ public class SpotifyManagerImpl implements SpotifyManager {
 
         pollingDisposable = Observable.interval(1500, TimeUnit.MILLISECONDS)
                 .flatMapMaybe(tick -> getSongInfo())
-                .subscribe();
+                .subscribe(currentlyPlayingSubject::onNext);
     }
 
     private void stopPolling() {
@@ -180,7 +178,7 @@ public class SpotifyManagerImpl implements SpotifyManager {
     public Maybe<SpotifySong> getSongInfo() {
         return spotifyApi.getCurrentlyPlaying()
                 .map(SpotifySong::new)
-                .doOnSuccess(musicManager::notifySongPlaying)
+                .onErrorResumeNext(Maybe.empty())
                 .observeOn(JavaFxScheduler.platform())
                 .subscribeOn(Schedulers.computation());
     }
