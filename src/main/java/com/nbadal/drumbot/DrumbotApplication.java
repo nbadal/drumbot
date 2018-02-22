@@ -7,7 +7,6 @@ import com.nbadal.drumbot.lifecycle.LifecycleManager;
 import javax.inject.Inject;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,7 +42,7 @@ public class DrumbotApplication extends Application {
         final Parent controls = controlsLoader.load();
         final Stage controlsStage = new Stage();
         controlsStage.setTitle("Drumbot Controls");
-        controlsStage.setScene(new Scene(controls, 300, 275));
+        controlsStage.setScene(new Scene(controls, 300, 400));
         controlsStage.show();
 
         lifecycleManager.onStart();

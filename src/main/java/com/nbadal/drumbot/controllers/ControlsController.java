@@ -1,8 +1,8 @@
 package com.nbadal.drumbot.controllers;
 
+import com.nbadal.drumbot.midi.MidiManager;
 import com.nbadal.drumbot.music.MusicManager;
 import com.nbadal.drumbot.music.MusicSource;
-import com.nbadal.drumbot.music.Song;
 import com.nbadal.drumbot.music.spotify.SpotifyManager;
 import com.nbadal.drumbot.util.StringUtils;
 
@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.sound.midi.MidiDevice;
 
 import io.reactivex.Completable;
 import javafx.fxml.Initializable;
@@ -23,6 +24,8 @@ import static io.reactivex.rxjavafx.observables.JavaFxObservable.valuesOf;
 public class ControlsController implements Initializable {
 
     public ComboBox<MusicSource> sourceSelector;
+
+    public ComboBox<MidiDevice> midiDeviceSelector;
 
     public TextField authCodeField;
     public TextField accessTokenField;
@@ -39,6 +42,9 @@ public class ControlsController implements Initializable {
     MusicManager musicManager;
 
     @Inject
+    MidiManager midi;
+
+    @Inject
     SpotifyManager spotify;
 
     @Override
@@ -47,6 +53,12 @@ public class ControlsController implements Initializable {
         sourceSelector.getItems().setAll(musicManager.getSources());
         valuesOf(sourceSelector.valueProperty())
                 .subscribe(musicManager::selectSource);
+
+        // Midi:
+        refreshMidiDevices();
+        valuesOf(midiDeviceSelector.valueProperty())
+                .flatMapCompletable(midi::setSelectedDevice)
+                .subscribe();
 
         // Spotify:
         valuesOf(authCodeField.textProperty()).map(StringUtils::isEmpty)
@@ -65,6 +77,11 @@ public class ControlsController implements Initializable {
 
         spotify.observeAccessToken().subscribe(accessTokenField::setText);
         spotify.observeRefreshToken().subscribe(refreshTokenField::setText);
+    }
+
+    private void refreshMidiDevices() {
+        midi.getDevices().toList()
+                .subscribe(devices -> midiDeviceSelector.getItems().setAll(devices));
     }
 
     private boolean isValidTrackUri(String value) {

@@ -15,13 +15,15 @@
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />
+      <RowConstraints />
    </rowConstraints>
    <children>
-      <ImageView fx:id="thumbnail" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="2" />
+      <ImageView fx:id="thumbnail" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="3" />
       <Label fx:id="songName" text="Song Name" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
          <font>
             <Font name="System Bold" size="16.0" />
          </font></Label>
       <Label fx:id="artistName" text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+      <Label fx:id="midiCounter" text="Drum Hits: 0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP" />
    </children>
 </GridPane>
